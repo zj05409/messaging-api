@@ -1,4 +1,4 @@
-abstract class DomainError extends Error {
+class DomainError extends Error {
   public errorCode: string;
 
   public errorMessage: string;

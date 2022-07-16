@@ -10,7 +10,7 @@ class Token {
     public readonly type: string,
     public readonly token: string,
     public readonly expiration: number,
-    public readonly userId: number | string,
+    public readonly userId: string,
     public readonly username: string,
     public readonly email: string,
     public readonly roles?: string[]

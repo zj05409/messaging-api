@@ -1,8 +1,7 @@
 import { Action } from 'routing-controllers';
 
-import { Token, TokenType } from '@presentation/authentication/token';
-
 import { JwtTokenProvider } from './jwt-token-provider';
+import { Token, TokenType } from './token';
 
 const tokenProvider = new JwtTokenProvider();
 
@@ -22,3 +21,5 @@ const checkUser = async (action: Action): Promise<Token | undefined> => {
 };
 
 export { checkRole, checkUser, tokenProvider };
+
+export { Token } from './token';

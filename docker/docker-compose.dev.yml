@@ -15,7 +15,8 @@ services:
       - db
     environment:
       - TZ=${TZ}
-      - WAIT_HOSTS=db:3306
+      #      - WAIT_HOSTS=db:3306
+      - WAIT_HOSTS=db:5984
     volumes:
       - ../:/code/app
       - ../package.json:/code/package.json
@@ -24,19 +25,32 @@ services:
     ports:
       - 9229:9229
       - ${EXTERNAL_PORT}:${PORT}
+  #  db:
+  #    image: mariadb
+  #    container_name: db
+  #    restart: always
+  #    environment:
+  #      - MYSQL_ROOT_PASSWORD=${DB_ROOT_PWD}
+  #      - MYSQL_USER=${DB_USER}
+  #      - MYSQL_PASSWORD=${DB_PWD}
+  #      - MYSQL_DATABASE=${DB_NAME}
+  #    volumes:
+  #      - ${DB_VOLUME}:/var/lib/mysql
+  #    ports:
+  #      - ${DB_PORT}:3306
   db:
-    image: mariadb
-    container_name: db
+    image: bitnami/couchdb:3.2.2
+    container_name: couchdb
     restart: always
     environment:
-      - MYSQL_ROOT_PASSWORD=${DB_ROOT_PWD}
-      - MYSQL_USER=${DB_USER}
-      - MYSQL_PASSWORD=${DB_PWD}
-      - MYSQL_DATABASE=${DB_NAME}
+      - COUCHDB_SECRET=${DB_ROOT_PWD}
+      - COUCHDB_USER=${DB_USER}
+      - COUCHDB_PASSWORD=${DB_PWD}
+      - NODENAME=${DB_NAME}
     volumes:
-      - ${DB_VOLUME}:/var/lib/mysql
+      - ${DB_VOLUME}:/opt/couchdb/data
     ports:
-      - ${DB_PORT}:3306
+      - ${DB_PORT}:5984
   adminer:
     image: adminer
     container_name: adminer

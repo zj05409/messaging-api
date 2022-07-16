@@ -1,0 +1,57 @@
+tags:
+  - name: Reservation
+    description: Reservation Management
+
+paths:
+  /healthz:
+    post:
+      tags:
+        - Reservation
+      summary: Reservation create
+      description: Create a reservation
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateReservationResponse'
+        500:
+          description: 'Internal Server Error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  schemas:
+    CreateReservationResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          description: New Reservation id
+          example: 'id1'
+        appVersion:
+          type: string
+          description: Application version
+          example: '1.0.0'
+    ErrorResponse:
+      type: object
+      properties:
+        status:
+          type: number
+          description: Response HTTP status code
+          example: 500
+        code:
+          type: string
+          description: Unique error identifier
+          example: 'api_error'
+        message:
+          type: string
+          description: Error description
+          example: 'Unexpected internal server error'
+        appVersion:
+          type: string
+          description: Application version
+          example: '1.0.0'

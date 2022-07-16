@@ -3,6 +3,6 @@ import { App } from '@presentation/app';
 
 const start = async (): Promise<void> => {
   await bootstrap();
-  new App().start();
+  await new App().start();
 };
 start();

@@ -4,7 +4,7 @@ import { ClassConstructor, IocAdapter } from 'routing-controllers';
 class AwilixAdapter implements IocAdapter {
   private readonly diContainer: AwilixContainer;
 
-  private classNameMapper: (className: string) => string;
+  private readonly classNameMapper: (className: string) => string;
 
   constructor(diContainer: AwilixContainer, classNameMapper: (className: string) => string) {
     this.diContainer = diContainer;
