@@ -1,134 +1,107 @@
-<div align="center">
- <img
-  width="500"
- alt="Node.js, Typescript and Express template"
- src="https://i.imgur.com/bpnghuI.png">
-<br>
-<br>
+# Instruction of how to set up and execute
 
-![GitHub package.json version](https://img.shields.io/github/package-json/v/borjapazr/express-typescript-skeleton?style=flat-square)
-![GitHub CI Workflow Status](https://img.shields.io/github/workflow/status/borjapazr/express-typescript-skeleton/CI?style=flat-square&logo=github&label=CI)
-![GitHub CD Workflow Status](https://img.shields.io/github/workflow/status/borjapazr/express-typescript-skeleton/CD?style=flat-square&logo=github&label=CD)
-![GitHub LICENSE](https://img.shields.io/github/license/borjapazr/express-typescript-skeleton?style=flat-square)
+First, you can cd into the docker/ directory of the api project, and execute the command:
+docker-compose -f docker-compose.dev.yml up
+after finished, you will see:
 
-<h4>
-  🔰🦸 Production-ready template for backends created with Node.js, Typescript and Express
-</h4>
+![image](https://user-images.githubusercontent.com/1572996/179399183-e2661234-3bd1-4b62-8e6b-7608d4fd55b3.png)
 
-<a href="#ℹ️-about">ℹ️ About</a> •
-<a href="#-features">📋 Features</a> •
-<a href="#-contributing"> 🤝 Contributing</a> •
-<a href="#️-roadmap"> 🛣️ Roadmap</a> •
-<a href="#-credits">🎯 Credits</a> •
-<a href="#-license">🚩 License</a>
+Second, you cd into the root of the frontend project and run:
+yarn && mkdir -p ../restaurants-reservation-api/public && yarn build && cp -r build/\* ../restaurants-reservation-api/public
 
-</div>
+Then you have build and copy the frontend app into the backend app.
 
----
+After that, you can open http://localhost:5000 in your Chrome, and see this:
 
-## ℹ️ About
+![image](https://user-images.githubusercontent.com/1572996/179399358-6d2e32af-1f2f-45d3-9338-91067937e301.png)
 
-The main goal of this project is to provide a base template for the generation of a production-ready REST API made with `Node.js`, `Express` and `Typescript`. The idea is to avoid having to configure all the tools involved in a project every time it is started and thus be able to focus on the definition and implementation of the business logic.
+Now you can input 'admin' as your username, 'hilton' as your password, click the 'Login' button, then you will login as a 'Admin' user, who is a builtin user who can only create a 'Employee' user, and nothing else. After login success, you'll see this:
 
-> 📣 This is an opinionated template. The architecture of the code base and the configuration of the different tools used has been based on best practices and personal preferences.
+![image](https://user-images.githubusercontent.com/1572996/179399546-5e5062ca-2977-43d6-ad45-da03d9a15bd7.png)
 
-### 🚀 Quick start
+In this page, you can input the infomation and create a 'Employee' user, who can list reservations from all 'Guest' users, and update them.
 
-- Start project in development mode:
+![image](https://user-images.githubusercontent.com/1572996/179399628-9c3c1e98-77d7-40c7-b00d-379533c13661.png)
 
-  ```bash
-  npm run dev
-  ```
+After you submit, the page will become empty again, and you can create another 'Employee' user.
 
-- Start project in production mode:
+Now you can click 'Logout' button, and go back to the login page.
 
-  ```bash
-  npm run start
-  ```
+Then you can click the 'Register now' link, and go to the 'Guest' user register page.
+![image](https://user-images.githubusercontent.com/1572996/179400014-d9bf0ce8-1ca7-4e22-8178-1ad451d37662.png)
 
-## 📋 Features
+After you complete the information and submit, you'll goto the login page automatic.
+Then you can login as the 'Guest' user you just created.
 
-- Built using [Typescript](https://github.com/microsoft/TypeScript)
-- Built using [Express Framework](https://github.com/expressjs/express): Fast, unopinionated, minimalist web framework for node.
-- Built using [Prisma](https://www.prisma.io/): Next-generation ORM for Node.js & TypeScript | PostgreSQL, MySQL, MariaDB, SQL Server, SQLite & MongoDB
-- Built using [Routing Controllers](https://github.com/typestack/routing-controllers): Allows to create controller classes with methods as actions that handle requests
-- JWT authentication and role based authorization using custom middleware
-- OpenAPI definition
-- Fully configured logger with [Winston](https://github.com/winstonjs/winston) and [Morgan](https://github.com/expressjs/morgan)
-- Unit, Integration and E2E tests using [Jest](https://github.com/facebook/jest) and [Supertest](https://github.com/visionmedia/supertest)
-- Linting with [ESLint](https://github.com/eslint/eslint)
-- Formatting with [Prettier](https://github.com/prettier/prettier)
-- [Spell check](https://github.com/streetsidesoftware/cspell)
-- Git hooks with [Husky](https://github.com/typicode/husky) and [lint-staged](https://github.com/okonet/lint-staged)
-- Containerised using [Docker](https://www.docker.com/) and [Docker Compose](https://docs.docker.com/compose/)
-- Path aliases support
-- Commit messages must meet conventional commits format
-- GitHub Actions
-- Makefile as project entrypoint
-- A lot of emojis 🛸
+![image](https://user-images.githubusercontent.com/1572996/179400081-0c1e8b53-6932-485d-8367-c37ebf3263e4.png)
 
-### 🐐 Makefile rules
+in this page, i.e. the 'Reservations' page, you can add a reservation by clicking the 'Add' button and fill the form.
 
-The main actions on this project are managed using a [Makefile](Makefile) as an entrypoint.
+![image](https://user-images.githubusercontent.com/1572996/179400207-564491b5-eb24-4bfb-9c2d-efec6df51ce7.png)
 
-- `deps`: Validate if the project dependencies are installed
-- `build/dev`: Build the project image for the development environment
-- `build/prod`: Build the project image for the production environment
-- `start/dev`: Start the project in development mode using Docker
-- `start/prod`: Start the project in production mode using Docker
-- `start/db`: Start database container
-- `test/dev`: Run the project tests using Docker
-- `stop/dev`: Stop dev application container
-- `stop/prod`: Stop prod application container
-- `stop/db`: Stop database container
-- `clean/dev`: Removes dev application container and associated resources
-- `clean/prod`: Removes prod application container and associated resources
+After submitting, you'll go back to the 'Reservations' page, and now you need to refresh the page, and see the newest reservation list:
 
-### ⚡ Scripts
+![image](https://user-images.githubusercontent.com/1572996/179400261-5299f856-67d2-40aa-9ee1-92fee2d8645e.png)
 
-[package.json](package.json) scripts:
+You hit the 'Edit' button, then you can update the information and hit the 'Update' button to submit.
 
-- `dev`: Start project in development mode
-- `build`: Build project and generate final build
-- `start`: Start project in production mode
-- `check:types`: Check if project types are correct
-- `check:format`: Check if project is formatted correctly
-- `check:lint`: Check if project is linted correctly
-- `check:spelling`: Check if project is spelled correctly
-- `fix:format`: Fix project format issues
-- `fix:lint`: Fix project lint issues
-- `fix:staged`: Check and fix staged files
-- `test`: Run all tests
-- `test:unit`: Run unit tests
-- `test:int`: Run integration tests
-- `test:e2e`: Run e2e tests
-- `test:watch`: Run tests in watch mode
-- `test:coverage`: Run tests with coverage
-- `coverage:view`: Show coverage information
-- `commit`: Help to commit changes using conventional commits
-- `version`: Generate new project version
-- `reset-hard`: Reset git repository to a clean state
-- `prepare-release`: Prepare the project for a release and generates a new release
-- `update-deps`: Update the project dependencies
+![image](https://user-images.githubusercontent.com/1572996/179400326-459e5557-7e8e-424f-bb2f-fb9ceda04d2b.png)
 
-## 🤝 Contributing
+After you submit, you go back to the 'Reservations' page again.
 
-Just fork and open a pull request. All contributions are welcome 🤗
+Now you can logout and login as a employee that you created as a 'Admin' user in the first step.
 
-## 🛣️ Roadmap
+![image](https://user-images.githubusercontent.com/1572996/179400385-bb60eeb9-bd3f-449a-a095-bc55671445d2.png)
 
-Please, check [TODO](TODO.md) for the current roadmap.
+In the page you see after login, you can not see the 'Add' button anymore. But you can see all the reservations in the app. (The Guest users can only see their own reservations.), and update them.
+![image](https://user-images.githubusercontent.com/1572996/179400470-e22975e6-6ad3-4280-947b-2fe1fe868941.png)
 
-## 🎯 Credits
+You can also change the reservation status from the default value 'Pending' into 'Completed' or 'Canceled'.(The 'Guest' users can only change theire own reservations from 'Pending' into 'Canceled'). But by now I only finished developing the Rest and GraphQL apis of the 'Change Status' function, not the frontend.
 
-To implement this project I have based myself on many similar projects. There were countless of them and I gave them all a star.
+# Explain of the tech stack used in this project and what the reason behind the choice
 
-🙏 Thank you very much for these wonderful creations.
+I used express.js as the Web Framework, because I wrote most of my Node.js project in the help of it and It's popular.
 
-### ⭐ Stargazers
+I used Routing Controllers because it's an powerful data binding and validation tool, which can eliminate bulk of boilerplate codes. By using it, I can skip writing code processing the request and response data and converting input data into typescript strongly typed objects.
 
-[![Stargazers repo roster for @borjapazr/express-typescript-skeleton](https://reporoster.com/stars/borjapazr/express-typescript-skeleton)](https://github.com/borjapazr/express-typescript-skeleton/stargazers)
+I used Awilix for Dependency Injection, so the classes don't have to create and inject the objects they depend on.
 
-## 🚩 License
+I used Jest and Supertest for automatic tests, because, they can help me write and run unit tests, integration tests as well as e2e api tests.
 
-MIT @ [borjapazr](https://bpaz.dev). Please see [License](LICENSE) for more information.
+I used Docker because it can run everything my app depends on efficiently, including the programs which can not run on macOS. And it can help anyone to run my application on any computer without worrying about problems relating to OS or Language versions.
+
+# Explain of the project structure and why make it so
+
+The docker/ folder contains Dockerfile and docker-compose config files.
+
+The features/ folder contains cucumber.js files, which I don't have enough time to finish.
+
+The logs/ folder contains all the log files.
+
+The public/ folder contains frontend files after build.
+
+The test/ folder contains the test source files, including unit/ integration/ e2e/ and cucumber/ subfolders.
+
+The src/ folder contains the main source files, including:
+
+- domain/ folder: the domain objects representing the data model of the project, and used for CouchDB mapping
+- infrastructure/ folder: the utility codes independent of business codes, including the global config data, error classes, dependency injection codes, and also the couchdb client.
+
+- persistence/ folder: the DAO(Data Access Object) classes
+- application/ folder: the business logic, including the files relating to jwt tokens, and business use case classes with the param and return value classes.
+
+- presentation/ folder: the REST AND GraphQL API implementation codes, and authentication & logging middlewares.
+
+There are some folders and files that comes from the project template I'm using, which should be deleted, but I don't have time to finish that.
+
+# Test Report if applicable
+
+![img.png](img.png)
+
+I have only finished writing unit test, integration test and e2e test for just one use case: Create Reservation, which can be run by executing 'yarn test'.
+
+# Reference
+
+I created this project from the template: [express-typescript-skeleton](https://github.com/borjapazr/express-typescript-skeleton).
+
+I rearrange the project folders, add GraphQL and CouchDB support.

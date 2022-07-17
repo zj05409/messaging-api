@@ -18,12 +18,17 @@ const Repo = () => {
   // nano.db.destroy('reservation');
   // repo.db.destroy('user')
   // repo.db.destroy('reservation')
+  // repo.db.destroy('user')
+  // repo.db.destroy('reservation')
   return nano({
     url,
     requestDefaults: {
       agent: httpAgent
     }
   });
+  // const repo = nano(...
+  // repo.db.destroy('user')
+  // repo.db.destroy('reservation')
 };
 
 export { Repo };
