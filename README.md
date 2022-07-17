@@ -96,7 +96,7 @@ There are some folders and files that comes from the project template I'm using,
 
 # Test Report if applicable
 
-![img.png](img.png)
+![image](https://user-images.githubusercontent.com/1572996/179403024-c0dbcdd5-a05a-48e9-87ac-c4b577352c78.png)
 
 I have only finished writing unit test, integration test and e2e test for just one use case: Create Reservation, which can be run by executing 'yarn test'.
 
