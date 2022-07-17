@@ -3,22 +3,7 @@ import 'source-map-support/register';
 
 import { ApolloServerPluginDrainHttpServer } from 'apollo-server-core';
 // const { GraphQLScalarType, Kind } = require('graphql');
-import { ApolloServer, gql } from 'apollo-server-express';
-// import {DateTime} from "luxon";
-import { plainToClass } from 'class-transformer';
-import {
-  validate
-  // validateOrReject,
-  // validateOrReject,
-  // Contains,
-  // IsInt,
-  // Length,
-  // IsEmail,
-  // IsFQDN,
-  // IsDate,
-  // Min,
-  // Max,
-} from 'class-validator';
+import { ApolloServer } from 'apollo-server-express';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import endent from 'endent';
@@ -28,18 +13,24 @@ import helmet from 'helmet';
 // import { Reservation } from '@domain/reservation/reservation';
 import * as http from 'http';
 import gracefulShutdown from 'http-graceful-shutdown';
+import { merge } from 'lodash';
 import path from 'path';
 import { useExpressServer } from 'routing-controllers';
 import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUiExpress from 'swagger-ui-express';
 
-import { CreateReservationRequest } from '@application/reservation/reservation-create.request';
-import { checkRole, checkUser } from '@application/token';
+import { checkRole, checkUser, tokenProvider } from '@application/token';
 import { LOGGER } from '@domain/shared';
-import { DomainError } from '@domain/shared/domain.error';
 import { GlobalConfig } from '@infrastructure/shared/config';
-import { DiContainer } from '@infrastructure/shared/di/di-container';
+import {
+  resolvers as authenticationResolvers,
+  typeDefinitions as Authentication
+} from '@presentation/controllers/authentication/authentication.graphql';
 import { ReservationController } from '@presentation/controllers/reservation';
+import {
+  resolvers as reservationResolvers,
+  typeDefinitions as Reservation
+} from '@presentation/controllers/reservation/reservation.graphql';
 
 import { AppConfig, AppInfo } from './config/app.config';
 import { AuthenticationController } from './controllers/authentication';
@@ -76,115 +67,37 @@ class App {
   }
 
   public async start(): Promise<void> {
-    const ReservationFragment = (suffix: string) => `
-        _id: String
-        _rev: String
-        userId: String!
-        name: String!
-        contactInfo: ContactInfo${suffix}!
-        expectedArriveTime: String!
-        table: ReservationTable${suffix}!
-    `;
-    const ContactInfoFragment = `
-        email: String
-        tel: String!
-    `;
-    const ReservationTableFragment = `
-        personCount: Int!
-        babyCount: Int!
-        position: String!
-    `;
-    const typeDefs = gql`
-      input ContactInfoInput {
-        ${ContactInfoFragment}
-      }
-
-      input ReservationTableInput {
-        ${ReservationTableFragment}
-      }
-      type ContactInfoOutput {
-        ${ContactInfoFragment}
-      }
-
-      type ReservationTableOutput {
-        ${ReservationTableFragment}
-      }
-
-      type CreateReservationResponse {
-          ${ReservationFragment('Output')}
-      }
-      type Reservation {
-          ${ReservationFragment('Output')}
-      }
-      input ReservationInput {
-          ${ReservationFragment('Input')}
-      }
-      type Mutation {
-        createReservation(
-          reservation: ReservationInput!
-        ): CreateReservationResponse!
-      }
+    const Query = `
       type Query {
-        getReservation(
-          id: String!
-        ): Reservation
+        _empty: String
       }
     `;
-    // const dateScalar = new GraphQLScalarType({
-    //   name: 'Date',
-    //   description: 'Date custom scalar type',
-    //   serialize(value:Date):string {
-    //
-    //     return DateTime.fromJSDate(value as Date).toFormat('yyyy-LL-dd HH:mm')
-    //     // return value.getTime(); // Convert outgoing Date to integer for JSON
-    //   },
-    //   parseValue(value:string):Date {
-    //
-    //     return DateTime.fromFormat(value as string, 'yyyy-LL-dd HH:mm').toJSDate()
-    //     // return new Date(value); // Convert incoming integer to Date
-    //   },
-    //   parseLiteral(ast:any) {
-    //     if (ast.kind === Kind.INT) {
-    //       return new Date(parseInt(ast.value, 10)); // Convert hard-coded AST string to integer and then to Date
-    //     } else  if (ast.kind === Kind.STRING) {
-    //       return DateTime.fromFormat(ast.value as string, 'yyyy-LL-dd HH:mm').toJSDate()
-    //       // return new Date(parseInt(ast.value, 10)); // Convert hard-coded AST string to integer and then to Date
-    //     }
-    //     return null; // Invalid hard-coded value (not an integer)
-    //   },
-    // });
-    const resolvers = {
-      // Date: dateScalar,
-      Query: {
-        getReservation: async () => {
-          return null;
-        }
-      },
-      Mutation: {
-        createReservation: async (_: any, arguments_: { reservation: any }) => {
-          const reservationController: ReservationController = DiContainer.diContainer.resolve(
-            'reservationController'
-          ) as ReservationController;
-          try {
-            const reservationParsed = plainToClass(CreateReservationRequest, arguments_.reservation);
-            const errors = await validate(reservationParsed);
-            if (errors.length > 0) {
-              throw new DomainError('validationError', errors.toString());
-            }
-            return await reservationController.createReservation(reservationParsed);
-          } finally {
-            LOGGER.info('CreateReservation:' + JSON.stringify(arguments_.reservation));
-          }
-        }
+    const Mutation = `
+      type Mutation {
+        _empty: String
       }
-    };
+    `;
+    const resolvers = {};
     const httpServer = http.createServer(this.app);
     this.apolloServer = new ApolloServer({
       debug: true,
-      typeDefs: typeDefs,
-      resolvers: resolvers,
+      typeDefs: [Query, Mutation, Authentication, Reservation],
+      resolvers: merge(resolvers, authenticationResolvers, reservationResolvers),
       csrfPrevention: true,
       cache: 'bounded',
+
+      context: async ({ req }) => {
+        const auth = req ? req.headers.authorization : null;
+        if (!auth || !auth.toLowerCase().startsWith('bearer ')) {
+          return {};
+        }
+        const token = tokenProvider.getTokenFromHeader(auth);
+
+        if (!tokenProvider.validateAccessToken(token)) {
+          return {};
+        }
+        return { currentUser: tokenProvider.parseToken(token) };
+      },
       plugins: [ApolloServerPluginDrainHttpServer({ httpServer })]
     });
     await this.apolloServer.start();
@@ -293,8 +206,10 @@ class App {
        Description: ${AppInfo.APP_DESCRIPTION}
        Version: ${AppInfo.APP_VERSION}
        Port: ${this.port}
-       Base Path: ${this.basePath}
-       OpenApi Spec Path: ${this.basePath}/spec
+       Api Base Path: http://localhost:${this.port}${this.basePath}
+       Mobile H5 Frontend Path: http://localhost:${this.port}
+       GraphQL Api Path: http://localhost:${this.port}/graphql
+       OpenApi Spec Path: http://localhost:${this.port}${this.basePath}/spec
        Environment: ${this.env}
        Author: ${AppInfo.AUTHOR_NAME}
        Email: ${AppInfo.AUTHOR_EMAIL}

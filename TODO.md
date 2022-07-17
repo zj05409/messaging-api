@@ -10,23 +10,26 @@
 - [x] ●Restaurant employees should able to mark a reservation as completed or canceled.
 - [x] ●Restaurant employees should able to browse all the reservations by date and status.
 - [x] ●Restaurant employees should able to check reservation detail.
-- [ ] complete GraphQL apis
 - [x] ●A SPA(Single Page Application) to interact with the backend and show how the API works.
 - [x] complete validations
 - [x] universal exception handling
+- [x] everyone can register as a guest
+- [x] superuser add admin user
+- [x] replace mocked login codes to real codes
+- [x] complete GraphQL apis
+- [x] improve banner
+- [ ] add register and login frontend pages
+- [ ] fix date-transformer not working and null-accepted error
 - [ ] add all necessary loggings
 - [ ] add every validation failed unit tests
 - [ ] add cucumber GraphQL api tests
-- [ ] improve banner
 - [ ] ●Instruction of how to set up and execute
 - [ ] ●Explain of the tech stack used in this project and what the reason behind the choice
 - [ ] ●Explain of the project structure and why make it so
 - [ ] ●Test Report if applicable
 - [ ] remove all unnecessary codes like comments and create&update response
 - [ ] shorten token expire time
-- [ ] everyone can register as a guest
-- [ ] superuser add admin user
-- [ ] replace mocked login codes to real codes
+- [ ] add pagination and query conditions
 
 ### Original writer todo
 

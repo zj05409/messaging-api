@@ -93,18 +93,18 @@ class AuthenticationController {
     return this.authenticationRegisterUseCase.execute(request);
   }
 
-  @Get('/refresh')
+  @Get('/refreshToken')
   @HttpCode(StatusCodes.OK)
   async refreshToken(@BodyParam('refreshToken') refreshToken: string): Promise<AuthenticationLoginResponse | null> {
     return this.authenticationRefreshUseCase.execute(refreshToken);
   }
 
-  @Get('/protected')
+  @Get('/currentUser')
   @UseBefore(AuthenticationMiddleware)
   @Authorized()
   // @Authorized(['Admin'])
   @HttpCode(StatusCodes.OK)
-  protected(@CurrentUser() user?: Token): any {
+  currentUser(@CurrentUser() user?: Token): any {
     return user;
   }
 }
