@@ -7,7 +7,7 @@ class AuthenticationLoginRequest {
   @MaxLength(50)
   username: string;
 
-  @MinLength(6)
+  @MinLength(5)
   @MaxLength(50)
   password: string;
 }

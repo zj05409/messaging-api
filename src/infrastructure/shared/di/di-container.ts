@@ -1,14 +1,24 @@
 import { asClass, asFunction, AwilixContainer, createContainer, InjectionMode } from 'awilix';
 import { useContainer } from 'routing-controllers';
 
+import { ChatDao } from '@/persistence/chat/chat.dao';
+import { MessageDao } from '@/persistence/message/message.dao';
 import { ReservationDao } from '@/persistence/reservation/reservation.dao';
 import { UserDao } from '@/persistence/user/user.dao';
 import {
   AuthenticationLoginUseCase,
   AuthenticationRefreshUseCase,
-  AuthenticationRegisterUseCase
+  AuthenticationRegisterUseCase,
+  UserGetUseCase
 } from '@application/authentication';
+import { ChatCreateUseCase, ChatGetUseCase, ChatListUseCase } from '@application/chat';
 import { HealthCheckerUseCase } from '@application/health/health-checker.usecase';
+import {
+  MessageCreateUseCase,
+  MessageDeleteUseCase,
+  MessageGetUseCase,
+  MessageListUseCase
+} from '@application/message';
 import {
   ReservationCreateUseCase,
   ReservationGetUseCase,
@@ -19,6 +29,7 @@ import {
 import { LOGGER } from '@domain/shared';
 import { Repo } from '@infrastructure/shared/persistence/couch/repo';
 import { AuthenticationController } from '@presentation/controllers/authentication';
+import { ChatController } from '@presentation/controllers/chat';
 import { HealthController } from '@presentation/controllers/health/health.controller';
 import { ReservationController } from '@presentation/controllers/reservation/reservation.controller';
 import {
@@ -65,7 +76,15 @@ class DiContainer {
         ReservationUpdateStatusUseCase,
         AuthenticationRegisterUseCase,
         AuthenticationLoginUseCase,
-        AuthenticationRefreshUseCase
+        AuthenticationRefreshUseCase,
+        UserGetUseCase,
+        ChatListUseCase,
+        ChatGetUseCase,
+        ChatCreateUseCase,
+        MessageListUseCase,
+        MessageGetUseCase,
+        MessageCreateUseCase,
+        MessageDeleteUseCase
       ]);
 
       // Use cases
@@ -76,10 +95,12 @@ class DiContainer {
         }
       ]);
       // Controllers
-      this.registerSingletonClass([HealthController, AuthenticationController, ReservationController]);
+      this.registerSingletonClass([HealthController, AuthenticationController, ReservationController, ChatController]);
 
       this.registerSingletonClass([ReservationDao]);
       this.registerSingletonClass([UserDao]);
+      this.registerSingletonClass([ChatDao]);
+      this.registerSingletonClass([MessageDao]);
 
       useContainer(new AwilixAdapter(this.diContainer, camelCaseClassNameMapper));
 

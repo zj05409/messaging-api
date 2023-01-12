@@ -16,6 +16,7 @@ class AuthenticationLoginUseCase
 
   async execute(request: AuthenticationLoginRequest): Promise<AuthenticationLoginResponse> {
     const user = await this.userDao.getUser(request.username);
+    console.log(JSON.stringify({ username: request.username, user }));
     if (!user || user.password !== request.password) {
       throw new UnauthorizedError();
     }

@@ -12,7 +12,7 @@ class AuthenticationRegisterUseCase implements BaseUseCase<AuthenticationRegiste
 
   async execute(request: AuthenticationRegisterRequest): Promise<User> {
     const user = await this.userDao.createOrReplaceUser(
-      new User(request.username, request.password, request.email, request.roles)
+      new User(request.username, request.password, request.email, request.roles, request.name, request.avatar)
     );
     user.password = '';
     return user;

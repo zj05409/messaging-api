@@ -2,6 +2,16 @@
 
 ### Todo
 
+- [ ] create group chat
+- [ ] create 1to1 chat
+- [ ] list sessions
+- [ ] delete session
+- [ ] exit session
+- [ ] send message
+  - [ ] with reference
+  - [ ] with at
+- [ ] list messages
+- [ ] delete message
 - [x] ●Basic Authentication
 - [x] ●Guests should able to make reservations.
 - [x] ●Guests should able to update their reservations.

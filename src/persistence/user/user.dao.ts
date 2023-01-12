@@ -8,10 +8,11 @@ import { User } from '@domain/user/user';
 // import {classToPlain} from "class-transformer";
 
 interface IUserDao {
-  listUser(user_id: string | null): Promise<User[]>;
+  listUser(user_ids: string[] | null): Promise<User[]>;
   getUser(id: string): Promise<User>;
   createOrReplaceUser(user: User): Promise<User>;
 }
+const DEFAULT_AVATAR = 'https://avatars.githubusercontent.com/u/1572996?v=4';
 class UserDao implements IUserDao {
   private db: DatabaseScope;
 
@@ -29,12 +30,12 @@ class UserDao implements IUserDao {
     // })
   }
 
-  async listUser(): Promise<User[]> {
+  async listUser(userIds: string[]): Promise<User[]> {
     try {
       await this.initDb();
       this.repo = this.db.use('user');
       const result = await this.repo.find({
-        selector: {}
+        selector: userIds ? { _id: { $in: userIds } } : {}
       });
       // if (!response.ok) {
       //   throw new PersistenceError();
@@ -95,9 +96,27 @@ class UserDao implements IUserDao {
         const databaseList = await this.db.list();
         if (!databaseList.includes('user')) {
           await this.db.create('user');
-          await this.db.use('user').insert(new User('admin', 'hilton', 'admin@reservation.com', [Role.Admin]));
-          await this.db.use('user').insert(new User('employee', 'hilton', 'employee@reservation.com', [Role.Employee]));
-          await this.db.use('user').insert(new User('guest', 'hilton', 'guest@reservation.com', [Role.Guest]));
+          await this.db
+            .use('user')
+            .insert(new User('admin', 'hilton', 'admin@reservation.com', [Role.Admin], 'Admin', DEFAULT_AVATAR));
+          await this.db
+            .use('user')
+            .insert(
+              new User('employee', 'hilton', 'employee@reservation.com', [Role.Employee], 'Employee', DEFAULT_AVATAR)
+            );
+          await this.db
+            .use('user')
+            .insert(new User('guest', 'hilton', 'guest@reservation.com', [Role.Guest], 'Guest', DEFAULT_AVATAR));
+          await this.db
+            .use('user')
+            .insert(new User('jacob1', 'jacob', 'jacob1@gradual.com', [Role.User], 'Jacob1', DEFAULT_AVATAR));
+          await this.db
+            .use('user')
+            .insert(new User('jacob2', 'jacob', 'jacob2@gradual.com', [Role.User], 'Jacob2', DEFAULT_AVATAR));
+          await this.db
+            .use('user')
+            .insert(new User('jacob3', 'jacob', 'jacob3@gradual.com', [Role.User], 'Jacob3', DEFAULT_AVATAR));
+          LOGGER.info('jacob3');
         }
       } catch (error) {
         LOGGER.error(error);

@@ -1,6 +1,7 @@
-import { gql } from 'apollo-server-express';
+// import { gql } from 'apollo-server-express';
 import { plainToClass } from 'class-transformer';
 import { validateOrReject } from 'class-validator';
+import gql from 'graphql-tag';
 
 import { AuthenticationLoginRequest } from '@application/authentication/authentication-login.request';
 import { AuthenticationRegisterRequest } from '@application/authentication/authentication-register.request';
@@ -22,6 +23,7 @@ const typeDefinitions = gql`
     Employee
     Guest
     Visitor
+    User
   }
   input LoginInput {
     username: String!

@@ -62,9 +62,9 @@ describe('Testing reservation controller/entrypoint', () => {
       expect(body).toHaveProperty('_id');
     }, 300_000);
   });
-  // describe('[POST] /grpahql', () => {
+  // describe('[POST] /graphql', () => {
   //   it('should return 200 OK', async () => {
-  //     const resp = request.post('/grpahql').send(
+  //     const resp = request.post('/graphql').send(
   //       `{
   //         _empty
   //       }`

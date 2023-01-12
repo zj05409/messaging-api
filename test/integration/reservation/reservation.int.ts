@@ -7,7 +7,7 @@ import { TablePosition } from '@domain/reservation/table-position';
 import { ReservationDao } from '@test/integration/reservation/dao/reservation.dao';
 
 describe('Testing create reservation use case', () => {
-  it('should return ALIVE health status', () => {
+  it('should return not null reservation object', () => {
     const reservation = new Reservation(
       '1',
       'Jacob',

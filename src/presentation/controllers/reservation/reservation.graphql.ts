@@ -1,6 +1,7 @@
-import { gql } from 'apollo-server-express';
+// import { gql } from 'apollo-server-express';
 import { plainToClass } from 'class-transformer';
 import { validateOrReject } from 'class-validator';
+import gql from 'graphql-tag';
 
 import { CreateReservationRequest } from '@application/reservation/reservation-create.request';
 import { UpdateReservationRequest } from '@application/reservation/reservation-update.request';
