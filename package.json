@@ -58,7 +58,7 @@
     "@cspell/dict-bash": "^2.0.3",
     "@cspell/dict-companies": "^2.0.7",
     "@cspell/dict-es-es": "^2.2.0",
-    "@cspell/dict-filetypes": "^2.1.0",
+    "@cspell/dict-filetypes": "^3.0.0",
     "@cspell/dict-html": "^3.0.2",
     "@cspell/dict-lorem-ipsum": "^2.0.0",
     "@cspell/dict-node": "^3.0.1",
