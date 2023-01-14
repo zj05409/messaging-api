@@ -770,6 +770,11 @@
   resolved "https://registry.npmjs.org/@cspell/dict-filetypes/-/dict-filetypes-2.1.0.tgz"
   integrity sha512-YqdBw5sgZsEbXCbA7Dz01982sUrOyOQEJNwRrU2HlSgEswubapwJnATZ8WoPnE/NviVi0TvTqhReEQni55vtLA==
 
+"@cspell/dict-filetypes@^3.0.0":
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/@cspell/dict-filetypes/-/dict-filetypes-3.0.0.tgz#3bb1ede3e28449f0d76024a7b918a556f210973a"
+  integrity sha512-Fiyp0z5uWaK0d2TfR9GMUGDKmUMAsOhGD5A0kHoqnNGswL2iw0KB0mFBONEquxU65fEnQv4R+jdM2d9oucujuA==
+
 "@cspell/dict-fonts@^2.0.1":
   version "2.0.1"
   resolved "https://registry.npmjs.org/@cspell/dict-fonts/-/dict-fonts-2.0.1.tgz"
