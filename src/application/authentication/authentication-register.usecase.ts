@@ -12,7 +12,14 @@ class AuthenticationRegisterUseCase implements BaseUseCase<AuthenticationRegiste
 
   async execute(request: AuthenticationRegisterRequest): Promise<User> {
     const user = await this.userDao.createOrReplaceUser(
-      new User(request.username, request.password, request.email, request.roles, request.name, request.avatar)
+      new User(
+        request.username,
+        request.password,
+        request.email,
+        request.roles,
+        request.name || request.username,
+        request.avatar || 'https://website-v9.vercel.app/logo-white.svg'
+      )
     );
     user.password = '';
     return user;

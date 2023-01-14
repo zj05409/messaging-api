@@ -10,23 +10,16 @@ import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHt
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
-// import { json } from 'body-parser';
 import endent from 'endent';
 import express, { Application } from 'express';
 import figlet from 'figlet';
 import { PubSub } from 'graphql-subscriptions';
 import { useServer } from 'graphql-ws/lib/use/ws';
 import helmet from 'helmet';
-// import { Reservation } from '@domain/reservation/reservation';
 import * as http from 'http';
 import gracefulShutdown from 'http-graceful-shutdown';
 import { merge } from 'lodash';
-import path from 'path';
 import { useExpressServer } from 'routing-controllers';
-// import { WebSocketLink } from '@apollo/client/link/ws';
-// import { SubscriptionClient } from 'subscriptions-transport-ws';
-import swaggerJSDoc from 'swagger-jsdoc';
-import swaggerUiExpress from 'swagger-ui-express';
 import { WebSocketServer } from 'ws';
 
 import { checkRole, checkUser, tokenProvider } from '@application/token';
@@ -38,11 +31,6 @@ import {
 } from '@presentation/controllers/authentication/authentication.graphql';
 import { ChatController } from '@presentation/controllers/chat';
 import { resolvers as chatResolvers, typeDefinitions as Chat } from '@presentation/controllers/chat/chat.graphql';
-import { ReservationController } from '@presentation/controllers/reservation';
-import {
-  resolvers as reservationResolvers,
-  typeDefinitions as Reservation
-} from '@presentation/controllers/reservation/reservation.graphql';
 
 import { AppConfig, AppInfo } from './config/app.config';
 import { AuthenticationController } from './controllers/authentication';
@@ -74,7 +62,6 @@ class App {
     this.env = GlobalConfig.ENVIRONMENT;
     if (this.env === 'test') {
       this.initializeExternalMiddlewares();
-      this.initializeSwagger();
       this.initializeApplication();
     }
   }
@@ -98,8 +85,8 @@ class App {
     const resolvers = {};
     const httpServer = http.createServer(this.app);
     const schema = makeExecutableSchema({
-      typeDefs: [Query, Mutation, Subscription, Authentication, Reservation, Chat],
-      resolvers: merge(resolvers, authenticationResolvers, reservationResolvers, chatResolvers)
+      typeDefs: [Query, Mutation, Subscription, Authentication, Chat],
+      resolvers: merge(resolvers, authenticationResolvers, chatResolvers)
     });
     const wsServer = new WebSocketServer({
       // This is the `httpServer` we created in a previous step.
@@ -157,10 +144,7 @@ class App {
     //   // ...
     // });
     this.apolloServer = new ApolloServer({
-      // debug: true,
       schema,
-      // typeDefs: [Query, Mutation, Subscription, Authentication, Reservation, Chat],
-      // resolvers: merge(resolvers, authenticationResolvers, reservationResolvers, chatResolvers),
       csrfPrevention: true,
       cache: 'bounded',
 
@@ -186,11 +170,8 @@ class App {
 
     this.initializeExternalMiddlewares();
 
-    // this.apolloServer.applyMiddleware({ app: this.app });
     this.app.use(
       '/graphql',
-      // cors<cors.CorsRequest>(),
-      // json(),
       expressMiddleware(this.apolloServer, {
         context: async ({ req }) => {
           const auth = req ? req.headers.authorization : null;
@@ -204,17 +185,12 @@ class App {
           }
           return { currentUser: tokenProvider.parseToken(token), pubsub };
         }
-        // context: async ({ req }) => ({ token: req.headers.token })
       })
     );
-    this.initializeSwagger();
     this.initializeApplication();
 
     this.server = httpServer.listen({ port: this.port });
     this.showBanner();
-    // this.server =  this.app.listen(this.port, () => this.showBanner());
-
-    // await new Promise<void>(resolve => httpServer.listen({ port: 4000 }, resolve));
 
     gracefulShutdown(this.server, {
       forceExit: true,
@@ -241,62 +217,17 @@ class App {
 
   private initializeExternalMiddlewares(): void {
     this.app.use(express.static('public', {}));
-    // this.app.use(express.static('public', {}));
-    // this.app.use(express.static('public', {}));
-    // this.app.use(express.static('public', {}));
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: true }));
     this.app.use(cookieParser());
     this.app.use(helmet());
-    // const corsOptions = {
-    //   origin: 'http://localhost:8000',
-    //   optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
-    // }
     this.app.use(cors());
-  }
-
-  private initializeSwagger(): void {
-    const swaggerDefinition = {
-      openapi: '3.0.3',
-      info: {
-        title: this.name,
-        version: AppInfo.APP_VERSION,
-        description: AppInfo.APP_DESCRIPTION,
-        license: {
-          name: 'Licensed Under MIT',
-          url: 'https://spdx.org/licenses/MIT.html'
-        },
-        contact: {
-          name: AppInfo.AUTHOR_NAME,
-          email: AppInfo.AUTHOR_EMAIL,
-          url: AppInfo.AUTHOR_WEBSITE
-        }
-      },
-      servers: [{ url: this.basePath }]
-    };
-
-    const jsDocumentOptions = {
-      swaggerDefinition,
-      apis: [path.join(__dirname, './**/*oas.yml')]
-    };
-
-    const swaggerUiOptions = {
-      customCss: '.swagger-ui .topbar { display: none }',
-      customSiteTitle: `${this.name} - OAS3`
-    };
-
-    const swaggerSpec = swaggerJSDoc(jsDocumentOptions);
-    this.app.use(
-      `${this.basePath}/spec`,
-      swaggerUiExpress.serve,
-      swaggerUiExpress.setup(swaggerSpec, swaggerUiOptions)
-    );
   }
 
   private initializeApplication(): void {
     useExpressServer(this.app, {
       routePrefix: this.basePath,
-      controllers: [AuthenticationController, HealthController, ReservationController, ChatController],
+      controllers: [AuthenticationController, HealthController, ChatController],
       middlewares: [MorganMiddleware, NotFoundMiddleware, ErrorHandlerMiddleware],
       authorizationChecker: checkRole,
       currentUserChecker: checkUser,
@@ -314,7 +245,6 @@ class App {
        Api Base Path: http://localhost:${this.port}${this.basePath}
        Mobile H5 Frontend Path: http://localhost:${this.port}
        GraphQL Api Path: http://localhost:${this.port}/graphql
-       OpenApi Spec Path: http://localhost:${this.port}${this.basePath}/spec
        Environment: ${this.env}
        Author: ${AppInfo.AUTHOR_NAME}
        Email: ${AppInfo.AUTHOR_EMAIL}

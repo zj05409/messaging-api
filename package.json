@@ -1,8 +1,8 @@
 {
-  "name": "node-ts-skeleton",
-  "version": "1.3.3",
-  "description": "This is a template to start developing a REST API with Node.js (Express), TypeScript, Eslint, Prettier, Husky, etc.",
-  "author": "Borja Paz Rodríguez (@borjapazr)",
+  "name": "messaging-api",
+  "version": "1.0.0",
+  "description": "This is a messaging api with Node.js (Express), Apollo GraphQL, TypeScript, Eslint, Prettier, Husky, etc.",
+  "author": "Jacob Zhang (@zj05409)",
   "license": "MIT",
   "keywords": [
     "node",
@@ -13,11 +13,10 @@
     "docker",
     "makefile"
   ],
-  "repository": "https://github.com/borjapazr/express-typescript-skeleton",
+  "repository": "https://github.com/zj05409/gradual-messaging-api",
   "main": "dist/index.js",
   "files": [
     "dist",
-    "CHANGELOG.md",
     "LICENSE",
     "README.md"
   ],
@@ -29,7 +28,7 @@
     "dev": "cross-env NODE_ENV=development nodemon",
     "build": "run-s build:*",
     "build:compile": "rimraf dist && tsc -p tsconfig.build.json && tsc-alias -p tsconfig.build.json --silent",
-    "build:assets": "copyfiles ---error --up 1 src/**/*.yml dist/ && copyfiles --error -f package*.json dist/",
+    "build:assets": "copyfiles --error -f package*.json dist/",
     "start": "cross-env NODE_ENV=production npm run build && node ./dist/index.js",
     "check:types": "tsc --pretty --noEmit",
     "check:format": "prettier --check .",
@@ -118,7 +117,7 @@
     "npm-check-updates": "^15.2.6",
     "npm-run-all": "^4.1.5",
     "prettier": "^2.7.1",
-    "prisma": "^4.0.0",
+    "prisma": "^4.8.1",
     "rimraf": "^3.0.2",
     "standard-version": "^9.5.0",
     "supertest": "^6.2.4",
@@ -131,10 +130,12 @@
   "dependencies": {
     "@apollo/server": "^4.3.0",
     "@graphql-tools/schema": "^9.0.12",
-    "@prisma/client": "^4.0.0",
+    "@prisma/client": "^4.8.1",
     "@types/swagger-jsdoc": "^6.0.1",
+    "add": "^2.0.6",
     "awilix": "^7.0.3",
     "body-parser": "^1.20.1",
+    "bson-objectid": "^2.0.4",
     "class-transformer": "0.3.1",
     "class-validator": "0.12.2",
     "cookie-parser": "^1.4.6",
@@ -169,7 +170,8 @@
     "swagger-ui-express": "^4.4.0",
     "winston": "^3.8.1",
     "winston-daily-rotate-file": "^4.7.1",
-    "ws": "^8.12.0"
+    "ws": "^8.12.0",
+    "yarn": "^1.22.19"
   },
   "overrides": {
     "commitizen": {

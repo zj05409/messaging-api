@@ -17,12 +17,12 @@ class AuthenticationRegisterRequest {
   @MaxLength(50)
   email: string;
 
-  @MinLength(2)
-  @MaxLength(50)
+  // @MinLength(0)
+  // @MaxLength(50)
   name: string;
 
-  @MinLength(0)
-  @MaxLength(200)
+  // @MinLength(0)
+  // @MaxLength(200)
   avatar: string;
 
   roles: Role[];

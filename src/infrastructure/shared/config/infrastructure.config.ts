@@ -13,7 +13,7 @@ const DatabaseConfig = {
   DB_PORT: getEnvironmentNumber('DB_PORT', 5306),
   DB_USER: getEnvironmentString('DB_USER', 'mars-user'),
   DB_PASSWORD: getEnvironmentString('DB_PASSWORD', 'mars-password'),
-  DB_NAME: getEnvironmentString('DB_NAME', 'base-app')
+  DB_NAME: getEnvironmentString('DB_NAME', 'messaging-api')
 };
 
 export { DatabaseConfig, GlobalConfig };

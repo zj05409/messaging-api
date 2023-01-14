@@ -3,7 +3,6 @@ import { useContainer } from 'routing-controllers';
 
 import { ChatDao } from '@/persistence/chat/chat.dao';
 import { MessageDao } from '@/persistence/message/message.dao';
-import { ReservationDao } from '@/persistence/reservation/reservation.dao';
 import { UserDao } from '@/persistence/user/user.dao';
 import {
   AuthenticationLoginUseCase,
@@ -19,19 +18,10 @@ import {
   MessageGetUseCase,
   MessageListUseCase
 } from '@application/message';
-import {
-  ReservationCreateUseCase,
-  ReservationGetUseCase,
-  ReservationListUseCase,
-  ReservationUpdateStatusUseCase,
-  ReservationUpdateUseCase
-} from '@application/reservation';
 import { LOGGER } from '@domain/shared';
-import { Repo } from '@infrastructure/shared/persistence/couch/repo';
 import { AuthenticationController } from '@presentation/controllers/authentication';
 import { ChatController } from '@presentation/controllers/chat';
 import { HealthController } from '@presentation/controllers/health/health.controller';
-import { ReservationController } from '@presentation/controllers/reservation/reservation.controller';
 import {
   AuthenticationMiddleware,
   ErrorHandlerMiddleware,
@@ -59,21 +49,8 @@ class DiContainer {
         NotFoundMiddleware
       ]);
 
-      // Use cases
-      // this.registerSingletonClassWithCustomName([
-      //   {
-      //     name: 'healthCheckerUseCase',
-      //     class: HealthCheckerUseCase
-      //   }
-      // ]);
-
       this.registerSingletonClass([
         HealthCheckerUseCase,
-        ReservationCreateUseCase,
-        ReservationUpdateUseCase,
-        ReservationGetUseCase,
-        ReservationListUseCase,
-        ReservationUpdateStatusUseCase,
         AuthenticationRegisterUseCase,
         AuthenticationLoginUseCase,
         AuthenticationRefreshUseCase,
@@ -87,17 +64,9 @@ class DiContainer {
         MessageDeleteUseCase
       ]);
 
-      // Use cases
-      this.registerSingletonFunctions([
-        {
-          name: 'repo',
-          class: Repo
-        }
-      ]);
       // Controllers
-      this.registerSingletonClass([HealthController, AuthenticationController, ReservationController, ChatController]);
+      this.registerSingletonClass([HealthController, AuthenticationController, ChatController]);
 
-      this.registerSingletonClass([ReservationDao]);
       this.registerSingletonClass([UserDao]);
       this.registerSingletonClass([ChatDao]);
       this.registerSingletonClass([MessageDao]);

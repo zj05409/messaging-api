@@ -40,56 +40,16 @@ class AuthenticationController {
     this.authenticationRefreshUseCase = authenticationRefreshUseCase;
   }
 
-  // static PredefinedUsers = [
-  //   {
-  //     userId: '1',
-  //     username: 'admin',
-  //     email: 'admin@reservation.com',
-  //     roles: ['Admin'],
-  //     password: 'hilton',
-  //   },
-  //   {
-  //     userId: '2',
-  //     username: 'employee',
-  //     email: 'employee@reservation.com',
-  //     roles: ['Employee'],
-  //     password: 'hilton',
-  //   },
-  //   {
-  //     userId: '3',
-  //     username: 'guest',
-  //     email: 'guest@reservation.com',
-  //     roles: ['Guest'],
-  //     password: 'hilton',
-  //   },
-  //   {
-  //     userId: '4',
-  //     username: 'visitor',
-  //     email: 'visitor@reservation.com',
-  //     roles: ['Visitor'],
-  //     password: 'hilton',
-  //   }
-  // ]
   @Post('/login')
   @HttpCode(StatusCodes.OK)
   async login(@Body({ validate: true }) request: AuthenticationLoginRequest): Promise<AuthenticationLoginResponse> {
-    // const user = AuthenticationController.PredefinedUsers.find((u)=>u.username === username && u.password === password)
     return this.authenticationLoginUseCase.execute(request);
   }
 
-  @Post('/employee')
-  @UseBefore(AuthenticationMiddleware)
-  @Authorized(['Admin'])
+  @Post('/user')
   @HttpCode(StatusCodes.OK)
-  async createEmployee(@Body({ validate: true }) request: AuthenticationRegisterRequest): Promise<User> {
-    request.roles = [Role.Employee];
-    return this.authenticationRegisterUseCase.execute(request);
-  }
-
-  @Post('/guest')
-  @HttpCode(StatusCodes.OK)
-  async createGuest(@Body({ validate: true }) request: AuthenticationRegisterRequest): Promise<User> {
-    request.roles = [Role.Guest];
+  async createUser(@Body({ validate: true }) request: AuthenticationRegisterRequest): Promise<User> {
+    request.roles = [Role.User];
     return this.authenticationRegisterUseCase.execute(request);
   }
 
@@ -102,7 +62,6 @@ class AuthenticationController {
   @Get('/currentUser')
   @UseBefore(AuthenticationMiddleware)
   @Authorized()
-  // @Authorized(['Admin'])
   @HttpCode(StatusCodes.OK)
   currentUser(@CurrentUser() user?: Token): any {
     return user;

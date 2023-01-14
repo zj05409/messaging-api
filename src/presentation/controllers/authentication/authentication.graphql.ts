@@ -7,8 +7,6 @@ import { AuthenticationLoginRequest } from '@application/authentication/authenti
 import { AuthenticationRegisterRequest } from '@application/authentication/authentication-register.request';
 import { Token } from '@application/token';
 import { LOGGER } from '@domain/shared';
-import { Role } from '@domain/user/role';
-import { UnauthorizedError } from '@infrastructure/errors';
 import { DiContainer } from '@infrastructure/shared/di/di-container';
 import { AuthenticationController } from '@presentation/controllers/authentication/authentication.controller';
 
@@ -20,9 +18,6 @@ const userFragment = `
 const typeDefinitions = gql`
   enum Role {
     Admin
-    Employee
-    Guest
-    Visitor
     User
   }
   input LoginInput {
@@ -34,11 +29,12 @@ const typeDefinitions = gql`
     username: String!
     password: String!
     email: String!
+    avatar: String
+    name: String
   }
 
   type User {
-    _id: String!
-    _rev: String!
+    id: String!
     ${userFragment}
   }
 
@@ -59,10 +55,7 @@ const typeDefinitions = gql`
     login(
       input: LoginInput!
     ): LoginResult!
-    createGuest(
-      input: RegisterInput!
-    ): User!
-    createEmployee(
+    createUser(
       input: RegisterInput!
     ): User!
     refreshToken(
@@ -99,30 +92,14 @@ const resolvers = {
         LOGGER.info('Login:' + JSON.stringify(arguments_.input));
       }
     },
-    createGuest: async (_: any, arguments_: { input: any }) => {
+    createUser: async (_: any, arguments_: { input: any }) => {
       const authenticationController = controller();
       try {
         const registerRequestParsed = plainToClass(AuthenticationRegisterRequest, arguments_.input);
         await validateOrReject(registerRequestParsed);
-        return await authenticationController.createGuest(registerRequestParsed);
+        return await authenticationController.createUser(registerRequestParsed);
       } finally {
-        LOGGER.info('CreateGuest:' + JSON.stringify(arguments_.input));
-      }
-    },
-    createEmployee: async (_: any, arguments_: { input: any }, context: { currentUser: Token }) => {
-      if (!context.currentUser || !context.currentUser.roles?.includes(Role.Admin)) {
-        throw new UnauthorizedError();
-      }
-      const authenticationController = controller();
-      try {
-        const registerRequestParsed: AuthenticationRegisterRequest = plainToClass(
-          AuthenticationRegisterRequest,
-          arguments_.input
-        );
-        await validateOrReject(registerRequestParsed);
-        return await authenticationController.createEmployee(registerRequestParsed);
-      } finally {
-        LOGGER.info('CreateEmployee:' + JSON.stringify(arguments_.input));
+        LOGGER.info('CreateUser:' + JSON.stringify(arguments_.input));
       }
     },
     refreshToken: async (_: any, arguments_: { input: string }) => {

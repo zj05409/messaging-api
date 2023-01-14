@@ -3,9 +3,7 @@ import { classToPlain } from 'class-transformer';
 import { Role } from '@domain/user/role';
 
 class User {
-  _id: string;
-
-  _rev: string;
+  id: string;
 
   username: string;
 
@@ -19,8 +17,8 @@ class User {
 
   avatar: string;
 
-  constructor(username: string, password: string, email: string, roles: Role[], name: string, avatar: string) {
-    this._id = username;
+  constructor(username: string, password: string, email: string, roles: Role[], name: string, avatar: string, id = '') {
+    this.id = id || username;
     this.username = username;
     this.password = password;
     this.email = email;

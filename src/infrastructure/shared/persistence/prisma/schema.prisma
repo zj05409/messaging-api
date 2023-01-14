@@ -1,5 +1,5 @@
 datasource db {
-  provider = "mysql"
+  provider = "mongodb"
   url      = env("DB_URL")
 }
 
@@ -8,39 +8,65 @@ generator client {
   binaryTargets = ["native"]
 }
 
-model Role {
-  id        Int       @id @default(autoincrement())
-  uuid      String    @unique
-  name      String
-  enabled   Boolean   @default(true)
-  users     User[]
-  createdAt DateTime? @default(now())
-  createdBy String?
-  updatedAt DateTime? @default(now())
-  updatedBy String?
-  deletedAt DateTime?
-  deletedBy String?
+model User {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  username String
+
+  password String
+
+  email String
+
+  roles Role[]
+
+  name String
+
+  avatar String
 }
 
-model User {
-  id            Int       @id @default(autoincrement())
-  uuid          String    @unique
-  gender        String
-  firstName     String
-  lastName      String
-  birthDate     DateTime
-  email         String    @unique
-  phoneNumber   String
-  address       String
-  profilePicUrl String
-  password      String
-  verified      Boolean   @default(false)
-  enabled       Boolean   @default(true)
-  roles         Role[]
-  createdAt     DateTime? @default(now())
-  createdBy     String?
-  updatedAt     DateTime? @default(now())
-  updatedBy     String?
-  deletedAt     DateTime?
-  deletedBy     String?
+model Chat {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  chatType ChatType
+
+  name String
+
+  avatar String
+}
+
+model Message {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  chatId String
+
+  userId String
+
+  messageType MessageType
+
+  content String
+
+  referenceExtract String?
+
+  referenceMessageId String?
+
+  ats String[]
+
+  atIds String[]
+
+  createdAt DateTime
+}
+
+enum ChatType {
+  Simple
+  Group
+}
+
+enum MessageType {
+  Text
+  Image
+}
+
+enum Role {
+  Admin
+  User
 }

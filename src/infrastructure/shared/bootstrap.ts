@@ -16,7 +16,6 @@ const bootstrap = async (): Promise<BootstrapResult> => {
   LOGGER.info('Initializing DI container...');
   await DiContainer.initialize();
 
-  // Reservation.repo = DiContainer.diContainer.resolve('repo');
   LOGGER.info('DI container initialized!');
 
   const bootstrapEndTime = performance.now();

@@ -1,126 +1,71 @@
-import { DatabaseScope, DocumentScope, ServerScope } from 'nano';
-
+/* eslint-disable security/detect-object-injection */
 import { PersistenceError } from '@/persistence/shared/persistence.error';
 import { LOGGER } from '@domain/shared';
 import { Role } from '@domain/user/role';
 import { User } from '@domain/user/user';
-
-// import {classToPlain} from "class-transformer";
+import { prisma, Role as PrismaRole } from '@infrastructure/shared/persistence/prisma/repo';
 
 interface IUserDao {
   listUser(user_ids: string[] | null): Promise<User[]>;
-  getUser(id: string): Promise<User>;
+  getUser(id: string): Promise<User | null>;
   createOrReplaceUser(user: User): Promise<User>;
 }
-const DEFAULT_AVATAR = 'https://avatars.githubusercontent.com/u/1572996?v=4';
 class UserDao implements IUserDao {
-  private db: DatabaseScope;
-
-  private repo: DocumentScope<User> | null;
-
-  constructor(repo: ServerScope) {
-    // let nano: ServerScope = <ServerScope>Nano('http://localhost:5984');
-    this.db = repo.db;
-    // this.db.destroy('user').then(()=>{
-    //   this.db.create('user')
-    // }).then(()=> {
-    //   this.repo = this.db.use('user');
-    // }).catch(()=>{
-    //   this.repo = this.db.use('user');
-    // })
-  }
-
-  async listUser(userIds: string[]): Promise<User[]> {
+  async listUser(usernames: string[]): Promise<User[]> {
     try {
-      await this.initDb();
-      this.repo = this.db.use('user');
-      const result = await this.repo.find({
-        selector: userIds ? { _id: { $in: userIds } } : {}
+      const result = await prisma.user.findMany({
+        where: usernames.length > 0 ? { username: { in: usernames } } : {}
       });
-      // if (!response.ok) {
-      //   throw new PersistenceError();
-      // }
-      // return User.fromJson(response);
-      return result.docs;
+      return result.map(
+        u =>
+          new User(
+            u.username,
+            u.password,
+            u.email,
+            u.roles.map(r => Role[PrismaRole[r]]),
+            u.name,
+            u.avatar,
+            u.id
+          )
+      );
     } catch (error) {
       LOGGER.error(error);
       throw new PersistenceError();
-    } finally {
-      this.repo = null;
     }
   }
 
-  async getUser(id: string): Promise<User> {
+  async getUser(username: string): Promise<User | null> {
     try {
-      await this.initDb();
-      this.repo = this.db.use('user');
-      // if (!response.ok) {
-      //   throw new PersistenceError();
-      // }
-      // return User.fromJson(response);
-      return await this.repo.get(id);
+      const result = await prisma.user.findFirst({ where: { username } });
+      // const allResult = await prisma.user.findMany();
+      // const count = await prisma.user.count();
+      // console.log(JSON.stringify({ count, allResult }));
+      if (!result) {
+        return null;
+      }
+      return new User(
+        result.username,
+        result.password,
+        result.email,
+        result.roles.map(r => Role[PrismaRole[r]]),
+        result.name,
+        result.avatar,
+        result.id
+      );
     } catch (error) {
       LOGGER.error(error);
       throw new PersistenceError();
-    } finally {
-      this.repo = null;
     }
   }
 
   async createOrReplaceUser(user: User): Promise<User> {
     try {
-      await this.initDb();
-      this.repo = this.db.use('user');
-      const response = await this.repo.insert(user);
-      if (!response.ok) {
-        throw new PersistenceError();
-      }
-      user._id = response.id;
-      user._rev = response.rev;
+      const response = await prisma.user.create({ data: user });
+      user.id = response.id;
       return user;
     } catch (error) {
       LOGGER.error(error);
       throw new PersistenceError();
-    } finally {
-      this.repo = null;
-    }
-  }
-
-  private async initDb() {
-    if (!this.repo) {
-      // this.repo = this.db.use('user');
-      // if(this.repo) {
-      //   return;
-      // }
-      try {
-        const databaseList = await this.db.list();
-        if (!databaseList.includes('user')) {
-          await this.db.create('user');
-          await this.db
-            .use('user')
-            .insert(new User('admin', 'hilton', 'admin@reservation.com', [Role.Admin], 'Admin', DEFAULT_AVATAR));
-          await this.db
-            .use('user')
-            .insert(
-              new User('employee', 'hilton', 'employee@reservation.com', [Role.Employee], 'Employee', DEFAULT_AVATAR)
-            );
-          await this.db
-            .use('user')
-            .insert(new User('guest', 'hilton', 'guest@reservation.com', [Role.Guest], 'Guest', DEFAULT_AVATAR));
-          await this.db
-            .use('user')
-            .insert(new User('jacob1', 'jacob', 'jacob1@gradual.com', [Role.User], 'Jacob1', DEFAULT_AVATAR));
-          await this.db
-            .use('user')
-            .insert(new User('jacob2', 'jacob', 'jacob2@gradual.com', [Role.User], 'Jacob2', DEFAULT_AVATAR));
-          await this.db
-            .use('user')
-            .insert(new User('jacob3', 'jacob', 'jacob3@gradual.com', [Role.User], 'Jacob3', DEFAULT_AVATAR));
-          LOGGER.info('jacob3');
-        }
-      } catch (error) {
-        LOGGER.error(error);
-      }
     }
   }
 }
