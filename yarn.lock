@@ -805,6 +805,11 @@
   resolved "https://registry.npmjs.org/@cspell/dict-html/-/dict-html-3.0.2.tgz"
   integrity sha512-ugMVQHZTvpYA/w8/E2dbSx2hdfFU9y91Omx40VUC6cNyF7jx00VKueK6gcRF3QZoB1PUhjla2YzxqRxuXI908A==
 
+"@cspell/dict-html@^4.0.3":
+  version "4.0.3"
+  resolved "https://registry.yarnpkg.com/@cspell/dict-html/-/dict-html-4.0.3.tgz#155450cb57750774583fce463d01d6323ab41701"
+  integrity sha512-Gae8i8rrArT0UyG1I6DHDK62b7Be6QEcBSIeWOm4VIIW1CASkN9B0qFgSVnkmfvnu1Y3H7SSaaEynKjdj3cs8w==
+
 "@cspell/dict-java@^3.0.7":
   version "3.0.7"
   resolved "https://registry.npmjs.org/@cspell/dict-java/-/dict-java-3.0.7.tgz"
